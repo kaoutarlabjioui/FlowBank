@@ -22,13 +22,23 @@ public class Account {
     }
 
 public Account( UUID ownerUserId,  AccountType accountType ) {
-    this.accountId = "BK-" +(int)(Math.random()*10000) + "-" + (int)(Math.random()*10000);
+    this.accountId = generateAccountId();
     this.ownerUserId = ownerUserId;
     this.balance = BigDecimal.ZERO.setScale(2 ,  RoundingMode.HALF_EVEN);
     this.createdAt = Instant.now();
     this.active = true;
     this.accountType = accountType;
 }
+
+    private String generateAccountId() {
+        int random1 = (int)(Math.random() * 10000);
+        int random2 = (int)(Math.random() * 10000);
+        String uuidPart = UUID.randomUUID().toString().substring(0, 4);
+        return "BK-" + random1 + "-" + random2 + "-" + uuidPart;
+    }
+
+
+
     public String getAccountId() {
     return accountId;
 }

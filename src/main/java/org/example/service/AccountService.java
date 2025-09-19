@@ -13,7 +13,7 @@ import static org.example.model.Account.AccountType.*;
 
 public class AccountService {
 
-    public  AccountRepository accountRepository;
+    public static AccountRepository accountRepository;
 
     public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
@@ -84,11 +84,12 @@ public class AccountService {
         System.out.println("Account cannot be closed. Balance must be zero.");
         return;
     }
-    accountRepository.delete(account);
+       account.setActive(false);
+    //accountRepository.delete(account);
        System.out.println("Account closed successfully.");
        return;
    }
-    public  Account getAccount() {
+    public static Account getAccount() {
         if(AuthService.loggedInUser==null){
             System.out.println("User is not logged in");
             return null;

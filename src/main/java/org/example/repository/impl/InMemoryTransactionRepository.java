@@ -21,7 +21,8 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     }
 
     public List<Transaction> findAll() {
-        return ArrayList<>(transactions);
+
+        return  new ArrayList<>(transactions);
     }
 
     public List<Transaction> findByAccountId(String accountId) {

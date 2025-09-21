@@ -14,15 +14,15 @@ import static org.example.model.Transaction.Type.DEPOSIT;
 
 public class TransactionService {
 
-    public static TransactionRepository transactionRepository;
+    public static  TransactionRepository transactionRepository;
     public AccountRepository accountRepository;
     public TransactionService(TransactionRepository transactionRepository , AccountRepository accountRepository) {
-        this.transactionRepository = transactionRepository;
+        TransactionService.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
 
     }
 
-    public void deposit(){
+    public  void deposit(){
         Account account = AccountService.getAccount();
         if (account == null) {
             return;
@@ -37,7 +37,7 @@ public class TransactionService {
         return;
     }
 
-    public void withdraw(){
+    public  void withdraw(){
         Account account = AccountService.getAccount();
         if (account == null){
             return;
@@ -57,7 +57,7 @@ public class TransactionService {
         return;
     }
 
-    public void transfer(boolean isInner){
+    public  void transfer(boolean isInner){
         Account account1 = AccountService.getAccount();
         if (account1 == null){
             return;
@@ -127,7 +127,7 @@ public class TransactionService {
 
     }
 
-    public static void listTransactions(){
+    public  void listTransactions(){
         Account account = AccountService.getAccount();
         if (account == null) {
             return;

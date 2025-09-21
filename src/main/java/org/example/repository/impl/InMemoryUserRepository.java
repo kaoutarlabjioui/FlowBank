@@ -23,7 +23,7 @@ public class InMemoryUserRepository implements UserRepository {
         users.add(user);
     }
     public Optional<User> findByEmail(String email){
-        return users.stream().filter(user->user.getEmail().equalsIgnoreCase(email)).findFirst().orElse(null);
+        return users.stream().filter(user->user.getEmail().equalsIgnoreCase(email)).findFirst();
     }
 
     public HashSet<User> all(){

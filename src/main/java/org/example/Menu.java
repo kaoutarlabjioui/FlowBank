@@ -1,76 +1,97 @@
 package org.example;
 
+import org.example.repository.AccountRepository;
+import org.example.repository.TransactionRepository;
+import org.example.repository.impl.InMemoryAccountRepository;
+import org.example.repository.impl.InMemoryTransactionRepository;
+import org.example.service.AuthService;
+import org.example.service.AccountService;
+import org.example.service.TransactionService;
 import org.example.utils.ConsoleColors;
+import org.example.utils.ConsoleUtils;
 
-import java.util.Scanner;
+import static org.example.service.AuthService.loggedInUser;
 
 public class Menu {
+    private static final AccountRepository accountRepository = new InMemoryAccountRepository();
+    private static final AccountService accountService = new AccountService(accountRepository);
+    private static final TransactionRepository transactionRepository = new InMemoryTransactionRepository();
+    private static final TransactionService transactionService = new TransactionService(transactionRepository, accountRepository);
 
-        public static void showMenu(boolean loggedIn, String userName) {
-            System.out.println(ConsoleColors.CYAN + ConsoleColors.BOLD);
-            System.out.println("========================================");
-            System.out.println("     💰 FLOWBANK - JAVA CONSOLE 💰");
-            System.out.println("========================================" + ConsoleColors.RESET);
+    public static boolean showLoginMenu() {
+        System.out.println(ConsoleColors.CYAN + "\n=== LOGIN MENU ===" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.YELLOW + "1. Register" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.YELLOW + "2. Login" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.RED + "3. Exit" + ConsoleColors.RESET);
 
-            if(!loggedIn) {
-                System.out.println(ConsoleColors.YELLOW + "1. Register" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.YELLOW + "2. Login" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.RED + "3. Exit" + ConsoleColors.RESET);
-            } else {
-                System.out.println(ConsoleColors.GREEN + "Logged in as: " + userName + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.YELLOW + "1. Create Account" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.YELLOW + "2. List My Accounts" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.YELLOW + "3. Deposit" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.YELLOW + "4. Withdraw" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.YELLOW + "5. Transfer" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.YELLOW + "6. Transaction History" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.YELLOW + "7. Update Profile" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.YELLOW + "8. Change Password" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.RED + "9. Logout" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.RED + "10. Exit" + ConsoleColors.RESET);
-            }
+        int choice = ConsoleUtils.readInt("Enter choice: ", 1, 3);
 
-            System.out.print(ConsoleColors.PURPLE + "Enter choice: " + ConsoleColors.RESET);
-        }
+        switch (choice) {
+            case 1 -> System.out.println(AuthService.register());
+            case 2 -> {
 
-        public static void main(String[] args) {
-            Scanner sc = new Scanner(System.in);
-            boolean loggedIn = false;
-            String userName = "";
 
-            while(true) {
-                showMenu(loggedIn, userName);
-                int choice = Integer.parseInt(sc.nextLine());
-
-                if(!loggedIn) {
-                    switch(choice) {
-                        case 1 -> System.out.println(ConsoleColors.GREEN + "Register selected" + ConsoleColors.RESET);
-                        case 2 -> {
-                            System.out.println(ConsoleColors.GREEN + "Login successful" + ConsoleColors.RESET);
-                            loggedIn = true;
-                            userName = "Alice"; // exemple
-                        }
-                        case 3 -> { System.out.println(ConsoleColors.RED + "Bye!" + ConsoleColors.RESET); return; }
-                        default -> System.out.println(ConsoleColors.RED + "Invalid choice!" + ConsoleColors.RESET);
-                    }
-                } else {
-                    switch(choice) {
-                        case 1 -> System.out.println("Create Account");
-                        case 2 -> System.out.println("List Accounts");
-                        case 3 -> System.out.println("Deposit");
-                        case 4 -> System.out.println("Withdraw");
-                        case 5 -> System.out.println("Transfer");
-                        case 6 -> System.out.println("Transaction History");
-                        case 7 -> System.out.println("Update Profile");
-                        case 8 -> System.out.println("Change Password");
-                        case 9 -> { loggedIn = false; userName = ""; System.out.println("Logged out"); }
-                        case 10 -> { System.out.println("Bye!"); return; }
-                        default -> System.out.println(ConsoleColors.RED + "Invalid choice!" + ConsoleColors.RESET);
-                    }
+                    String result = AuthService.login();
+                    System.out.println(result);
                 }
+
+            case 3 -> {
+                return false; // exit app
             }
         }
+        return true;
+    }
 
+    public static boolean showMainMenu() {
+        System.out.println(ConsoleColors.CYAN + "\n=== MAIN MENU ===" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.GREEN + "Logged in as: " + loggedInUser.getFullName() + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.YELLOW + "1. Create Account" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.YELLOW + "2. List My Accounts" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.YELLOW + "3. Deposit" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.YELLOW + "4. Withdraw" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.YELLOW + "5. Transfer" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.YELLOW + "6. Transaction History" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.YELLOW + "7. Change Password" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.RED + "8. Logout" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.RED + "9. Exit" + ConsoleColors.RESET);
 
+        int choice = ConsoleUtils.readInt("Enter choice: ", 1, 9);
 
+        switch (choice) {
+            case 1 -> accountService.createAccount(loggedInUser.getEmail());
+            case 2 -> accountService.listAccounts();
+            case 3 -> transactionService.deposit();
+            case 4 -> transactionService.withdraw();
+            case 5 -> transferMenu();
+            case 6 -> transactionService.listTransactions();
+            case 7 -> AuthService.changePassword();
+            case 8 -> {
+                AuthService.logout();
+                System.out.println(ConsoleColors.RED + "✅ Logged out." + ConsoleColors.RESET);
+            }
+            case 9 -> {
+                return false; // exit app
+            }
+        }
+        return true;
+    }
+
+    private static void transferMenu() {
+        boolean back = false;
+
+        while (!back) {
+            System.out.println(ConsoleColors.CYAN + "\n=== TRANSFER MENU ===" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.YELLOW + "1. Inner Transfer" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.YELLOW + "2. Outer Transfer" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "3. Back" + ConsoleColors.RESET);
+
+            int choice = ConsoleUtils.readInt("Enter choice: ", 1, 3);
+
+            switch (choice) {
+                case 1 -> transactionService.transfer(true);
+                case 2 -> transactionService.transfer(false);
+                case 3 -> back = true;
+            }
+        }
+    }
 }

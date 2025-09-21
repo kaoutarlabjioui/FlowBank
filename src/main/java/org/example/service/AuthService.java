@@ -14,7 +14,9 @@ public class AuthService {
 private static final InMemoryUserRepository userRepository= InMemoryUserRepository.getInstance();
  public static User loggedInUser;
 
-  public static String register(){
+
+
+    public static String register(){
     String fullName = ConsoleUtils.readString("FullName : ");
     String email;
 

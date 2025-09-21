@@ -9,14 +9,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.example.model.Account.AccountType.*;
-
 public class AccountService {
 
     public static AccountRepository accountRepository;
 
     public AccountService(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
+        AccountService.accountRepository = accountRepository;
     }
 
     public void createAccount(String ownerEmail) {
@@ -52,7 +50,14 @@ public class AccountService {
             return;
         }
 
+        BigDecimal initialBalance = ConsoleUtils.readPositiveBigDecimal("Initial deposit amount: ");
 
+        Account account = new Account(user.getId(), accountType);
+
+        account.setBalance(initialBalance);
+
+        accountRepository.save(account);
+        System.out.println( accountType +" Account created successfully with balance: " + initialBalance);
     }
 
     public void listAccounts() {
